@@ -1,0 +1,1 @@
+# load.py - specifies outputs, either locally or to a data warehouse
