@@ -1,8 +1,9 @@
 
 from datetime import datetime
-from logic.extract import extract_based_on_source
+from modules.extract import extract_based_on_source
 
-class SimpleETL:
+
+class BasicETL:
     def __init__(self, jointype="natural", output="df", destination=""):
         self.jointype = jointype
         self.extracted = []
@@ -10,13 +11,24 @@ class SimpleETL:
         self.destination = destination
         return
     
+
     def extract(self, sources: list):
         for source in sources:
             self.extracted.append(extract_based_on_source(source))
         return
     
-    def add_df_to_ndarray(self):
+
+    def transform():
+
+        # In addition to basic transformations such as merging, joining, and cleaning,
+
+        # We'll add the functionality to pass in functions that perform normalization. Likely needing a control object or something similar, and function templates, in order to quickly add and remove transformation steps.
+
+        # This of course depends on the schema, which is not known beforehand, which is why this flexibility is needed.
+
+        
         return
+        
 
     def etl(self, sources: list):
 

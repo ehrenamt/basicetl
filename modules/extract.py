@@ -1,14 +1,14 @@
-"""
-extract.py
-
-Provides functions for pulling from local or remote sources with different data formats and returns them as pandas dataframes.
-
-Functions:
-    extract_based_on_source(source): Identifies, validates, and extracts the data source
-    is_valid_url(source): Returns true if the URL is a valid string.
-    is_valid_path(path): Returns true if the path is a valid path and the file exists at the path.
-"""
-
+#
+# extract.py
+#
+# Provides functions for pulling from local or remote sources with different data formats 
+# and returns them as pandas dataframes.
+# 
+# Functions:
+#    extract_based_on_source(source): Identifies, validates, and extracts the data source
+#   is_valid_url(source): Returns true if the URL is a valid string.
+#   is_valid_path(path): Returns true if the path is a valid path and the file exists at the path.
+#
 
 import io
 import logging
