@@ -1,5 +1,6 @@
 
 from datetime import datetime
+from logic.extract import extract_based_on_source
 
 class SimpleETL:
     def __init__(self, jointype="natural", output="df", destination=""):
@@ -10,6 +11,8 @@ class SimpleETL:
         return
     
     def extract(self, sources: list):
+        for source in sources:
+            self.extracted.append(extract_based_on_source(source))
         return
     
     def add_df_to_ndarray(self):

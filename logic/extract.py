@@ -1,81 +1,107 @@
+"""
+extract.py
 
-# extract.py - handles pulling from various sources and converts to a standard format
+Provides functions for pulling from local or remote sources with different data formats and returns them as pandas dataframes.
 
+Functions:
+    extract_based_on_source(source): Identifies, validates, and extracts the data source
+    is_valid_url(source): Returns true if the URL is a valid string.
+    is_valid_path(path): Returns true if the path is a valid path and the file exists at the path.
+"""
+
+
+import io
 import logging
 import os
 import pandas as pd
 from pathlib import Path
+from urllib.error import URLError, HTTPError
 from urllib.parse import urlparse
-from urllib.request import urlretrieve
+from urllib.request import urlopen, Request
 
 logger = logging.getLogger(__name__)
 
-def extract_json(source):
-    script_dir = os.path.dirname(os.path.abspath(__file__)) 
-    full_json_path = os.path.join(script_dir, source) 
-    json_df = pd.read_json(full_json_path)
+def extract_based_on_source(source: str, output='df') -> pd.core.frame.DataFrame:
 
-    return json_df
+    filetype = ""
+    df = None
 
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    source_path = os.path.join(script_dir, source) 
 
-def extract_csv(source):
-    script_dir = os.path.dirname(os.path.abspath(__file__)) 
-    full_csv_path = os.path.join(script_dir, source) 
-    csv_df = pd.read_csv(full_csv_path)
-
-    return csv_df
-
-
-def extract_xml(source):
-    script_dir = os.path.dirname(os.path.abspath(__file__)) 
-    full_xml_path = os.path.join(script_dir, source) 
-    xml_df = pd.read_xml(full_xml_path)
-
-    return xml_df
-
-
-def extract_based_on_source(source: str, output='df'):
-
-    print(f'source points to {source}')
-
+    logger.debug(f'Source points to {source}.')
 
     if is_valid_url(source):
 
-        print('is url')
+        logger.debug('Source provided passes is_valid_URL() function.')
 
-        source, header = urlretrieve(source)
+        try:
+            web_request = Request(source)
+            with urlopen(web_request) as web_response:
+                web_content_type = web_response.headers.get('Content-Type', '')
+                web_content = web_response.read()
 
-        print(f'source points to {source}')
-    
+                # not a robust check, keeping it simple
+                if 'html' in web_content_type.lower():
+                    raise ValueError("Received HTML content, not valid data file.")
+                
+                filetype = web_content_type.split(';')[0].strip().lower()
 
-    if is_valid_path(source):
+                match filetype:
+                    case "text/csv":
+                        df = pd.read_csv(io.StringIO(web_content.decode('utf-8', errors='replace')))
 
-        logger.info(f'Source points to {source}')
+                    case 'application/json':
+                        df = pd.read_json(io.StringIO(web_content.decode('utf-8', errors='replace')))
 
-        filetype = Path(source).suffix.lower()
+                    case 'application/xml' | 'text/xml':
+                        df = pd.read_xml(io.StringIO(web_content.decode('utf-8', errors='replace')))
 
-        logger.info(f'Filetype {source}')
+                    case _:
+                        print("Default case url")
+        
+        except HTTPError as e:
+            logger.error(f'HTTP Error: {e.code} - {e.reason}')
+        except URLError as e:
+            logger.error(f'URL Error: {e.reason}')
+        except Exception as e:
+            logger.error(f'Unexpected error: {e}')
 
-        df = None
+        finally:
+            return df
 
+
+    elif is_valid_path(source_path):
+
+        filetype = Path(source_path).suffix.lower()
+
+        source = source_path
+
+        # This may not be the shortest or quickest way to do this.
+        # I am prioritizing readability.
         match filetype:
-
+        
             case ".csv":
-                df = extract_csv(source)
+                try:
+                    df = pd.read_csv(source)
+                except FileNotFoundError as e:
+                    print(f"File not found: {e}")
 
             case ".json":
-                df = extract_json(source)
+                df = pd.read_json(source)
 
             case ".xml":
-                df = extract_xml(source)
+                try:
+                    df = pd.read_xml(source)
+                except FileNotFoundError:
+                    print(f"File not found: {e}")
 
             case _:
                 print(f'Default case, nothing happens.')
+                logger.debug(f'{source} default')
+                pass
 
-        return df
-
-    return None
-
+    return df
 
 def is_valid_url(source: str) -> bool:
     parsed = urlparse(source)
@@ -84,12 +110,11 @@ def is_valid_url(source: str) -> bool:
     return False
 
 
-def is_valid_path(source: str) -> bool:
+def is_valid_path(path: str) -> bool:
     try:
-        Path(source)
-        return True
+        path = Path(path)
+        return path.exists() and path.is_file()
+    
     except Exception:
         return False
-
-# extract_based_on_source('file.xml')
-# extract_based_on_source('https://people.sc.fsu.edu/~jburkardt/data/csv/cities.csv ')
+    
