@@ -1,6 +1,7 @@
 # basicetl
 
-> [WORK IN PROGRESS] A basic tool for ETL processes, mostly for local work.
+> [WORK IN PROGRESS] 
+> A basic tool for ETL processes, mostly for local work.
 
 # Description
 
@@ -27,4 +28,4 @@ WIP
 
 # Tests
 
-[WORK IN PROGRESS] Tests are written using ```pytest``` and are located in the ```test``` subdirectory.
+WIP. Tests are written using ```pytest``` and are located in the ```test``` subdirectory.

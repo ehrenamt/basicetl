@@ -21,7 +21,7 @@ from urllib.request import urlopen, Request
 
 logger = logging.getLogger(__name__)
 
-def extract_based_on_source(source: str, output='df') -> pd.core.frame.DataFrame:
+def extract_based_on_source(source: str) -> pd.core.frame.DataFrame:
 
     filetype = ""
     df = None
@@ -102,6 +102,7 @@ def extract_based_on_source(source: str, output='df') -> pd.core.frame.DataFrame
                 pass
 
     return df
+
 
 def is_valid_url(source: str) -> bool:
     parsed = urlparse(source)

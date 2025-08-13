@@ -1,0 +1,12 @@
+{
+  "name": "Poland",
+  "capital": "Warsaw",
+  "population": 38000000,
+  "area": 312700,
+  "currency": "Zloty",
+  "languages": [
+    "Polish"
+  ],
+  "region": "Europe",
+  "subregion": "Central Europe"
+}
