@@ -1,0 +1,12 @@
+# Sample placeholder - not working.
+
+extract:
+  type: df
+
+transform:
+  join: inner
+
+sources:
+  - path: test/data/data.csv
+
+

@@ -1,23 +1,50 @@
-import os
-import sys
+"""Unit tests and mock tests for submodule.extract."""
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# pylint: disable=missing-docstring
 
-from basicetl import BasicETL
-
-REMOTE_SOURCE_1 = 'https://people.sc.fsu.edu/~jburkardt/data/csv/cities.csv'
-
-LOCAL_SOURCE_A1 = 'data/datafile_schema1_1.json'
-LOCAL_SOURCE_A2 = 'data/datafile_schema1_2.json'
-LOCAL_SOURCE_A3 = 'data/datafile_schema1_3.json'
-
-local_a = [LOCAL_SOURCE_A1, LOCAL_SOURCE_A2, LOCAL_SOURCE_A3]
+import pytest
+from basicetl.submodules import extract as ex
+# from unittest.mock import patch
 
 
-def test_extractions():
-    basicetl = BasicETL()
+@pytest.mark.parametrize("input_http_url, expected_https_url", [
+    ("http://example.com", "https://example.com"),
+    ("https://example.com", "https://example.com"),
+    ("ftp://example.com/path", "https://example.com/path"),
+])
 
-    # TODO: when passing in a file without an extension, this passes the valid check
-    # and ends up causing a preventable AttributeError nonetype in concatenate sources
-    basicetl.etl(local_a)
+def test_convert_to_https(input_http_url, expected_https_url):
+    assert ex.convert_to_https(input_http_url) == expected_https_url
 
+
+@pytest.mark.parametrize("input_http_url, expected_bool_output", [
+    ("https://people.sc.fsu.edu/~jburkardt/data/csv/cities.csv", True),
+    ("invalid://people.sc.fsu.edu/~jburkardt/data/csv/cities.csv", False),
+    ("https:/mistake//example/com", False),
+    ("http://example.com", True),
+    ("https://example.com", True),
+])
+
+def test_is_valid_url(input_http_url, expected_bool_output):
+    assert ex.is_valid_url(input_http_url) == expected_bool_output
+
+
+@pytest.mark.parametrize("input_file_path, expected_bool_output", [
+    ("test/data/datafile_schema1_1.json", True),
+    ("data/datafile_schema1_1", False),
+])
+
+def test_is_valid_path(input_file_path, expected_bool_output):
+
+    assert ex.is_valid_path(input_file_path) == expected_bool_output
+
+
+@pytest.mark.parametrize("source, expected_source_type", [
+    ("test/data/datafile_schema1_1.json", ex.SourceType.FILE),
+    ("test/data/file.xml", ex.SourceType.FILE),
+    ("https://example.com", ex.SourceType.URL),
+])
+
+def test_get_source_type(source, expected_source_type):
+    assert ex.get_source_type(source) == expected_source_type
+    return
