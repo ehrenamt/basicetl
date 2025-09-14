@@ -19,12 +19,18 @@ accounts_a2 = {
     "uname": ["Yishai", "Mukta",  "Leto"],
 }
 
+accounts_a = {
+    "id": ["000", "001", "002", "003", "004", "005"],
+    "uname": ["Elsy", " Kaveri",  "Shabani", "Yishai", "Mukta",  "Leto"],
+}
+
 accounts_b1 = {
     "id": ["000", "001", "002"],
     "uname": ["Elsy", " Kaveri",  "Shabani"],
     "email": ["example@example.com", "example@example.com",  "example@example.com"],
 }
 
+df_a = pd.DataFrame(accounts_a)
 df_a1 = pd.DataFrame(accounts_a1)
 df_a2 = pd.DataFrame(accounts_a2)
 df_b1 = pd.DataFrame(accounts_b1)
@@ -40,3 +46,11 @@ df_b1 = pd.DataFrame(accounts_b1)
 
 def test_check_schema_match(input_df_1, input_df_2, expected_bool):
     assert tf.check_schema_match(input_df_1, input_df_2) == expected_bool
+
+
+@pytest.mark.parametrize("input_sources, expected_df", [
+    ([df_a1, df_a2], df_a),
+])
+
+def test_concatenate_sources(input_sources, expected_df):
+    assert tf.concatenate_sources(input_sources) == expected_df

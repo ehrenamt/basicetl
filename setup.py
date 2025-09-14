@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 parent_dir = Path(__file__).resolve().parent
 
 setup(
-    name='your_package_name',
+    name='basicetl',
     version='v0.1.0',
     description='A local ETL automation tool.',
     author='Your Name',

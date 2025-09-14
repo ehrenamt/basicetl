@@ -9,9 +9,9 @@ _Version française de ce texte est disponible à [README.fr.md](README.fr.md)_
 
 basicetl simplifies ETL processes by abstracting error checking and extracting logic. Simply provide the sources, whether local files or via a remote resource, and specify the transformation and output.
 
-Useful for bootstrapping local data analysis and ML projects. It is not meant to be extremely flexible or able to work with large files and data of all types, but moreso a tool for quickly preparing daa of different types to be used in local data analysis scripts.
+Useful for bootstrapping local data analysis and ML projects. It is not meant to be extremely flexible or able to work with large files and data of all types, but moreso a tool for quickly preparing data of different types to be used in local data analysis scripts. It is not designed with cloud environments in mind (such as Databricks or Google Collab), but currently everything _should_ work the same regardless of the environment.
 
-Currently does not work with zipped files, but it should be a simple fix. I am working on SQL support as well, but without security features.
+Currently does not work with zipped files, but it should be a simple fix. I am working on SQL support as well, but without robust security features.
 
 It supports
 

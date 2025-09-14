@@ -1,23 +1,45 @@
 """Main class for the basicetl package."""
 
+from pathlib import Path
 from datetime import datetime
+
+# project imports
 from .submodules import extract as ex
 from .submodules.transform import configured_transform
+from .submodules.controllers import SubserviceController
+
+
+DEFAULT_CONFIG_PATH = Path("basicetl-config.yml")
 
 
 class BasicETL:
-    """A class for configuring and executing simple ETL tasks."""
+    """
+    A class for configuring and executing simple ETL tasks.
+    
+    BasicETL acts as a top-level facade or API to interact only with
+    the in-memory data and not the underlying functions.
+    """
 
 
     def __init__(self, jointype="natural", output_type="df", destination=""):
+        self.sources = []
         self.jointype = jointype
         self.extracted = []
         self.transformed = []
         self.output_type = output_type
         self.destination = destination
+        self.controller = SubserviceController()
 
 
-    def extract(self, sources: list):
+    def extract(self, sources: list = None):
+        """
+        Extracts sources and loads into memory.
+        Extraction logic and configuration is handled by the subservice controller.
+        """
+
+        if sources is None:
+            sources = self.sources
+
         for source in sources:
 
             ex.get_source_type(source)
@@ -42,7 +64,7 @@ class BasicETL:
         configured_transform(sources=sources)
 
 
-    def load(self, functions = []):
+    def load(self, functions = None):
         # if (functions == []):
         #     submodules.load.save_local()
         return
@@ -51,15 +73,14 @@ class BasicETL:
     def etl(self, sources: list):
         """Executes the entire ETL process."""
 
-        # potentially, we could use a state member variable to compare timings?
-
         time_start = datetime.now()
+
+        print('Beginning ETL processes...')
 
         self.extract(sources)
 
         self.transform()
 
-        # same thing. If destination = "" then simply return the df. Or collection of dfs.
         self.load()
 
         time_end = datetime.now()
@@ -69,4 +90,5 @@ class BasicETL:
         minutes = total_seconds // 60
         seconds = total_seconds % 60
 
+        print('ETL processes complete.')
         print(f'Time elapsed (mm:ss): {minutes:02d}:{seconds:02d}')
