@@ -7,11 +7,11 @@ join types, and filters.
 """
 
 import copy
-from typing import Callable
 import pandas as pd
+import gc # to force garbage collection after finishing memory-intensive tasks
 
 
-def configured_transform(sources, *customized_transformations: Callable):
+def configured_transform(source: pd.core.frame.DataFrame, t_options = None) -> pd.core.frame.DataFrame:
     """
     Transforms extracted sources based on the supplied configuration.
 
@@ -19,28 +19,24 @@ def configured_transform(sources, *customized_transformations: Callable):
     If no configuration is found, it will perform some basic transformations.
     """
 
-    # TODO: placeholder - needs major rework
+    if source is None:
+        return None
 
-    transformed_sources = copy.deepcopy(sources)
-    for i, func in customized_transformations:
-        for source in sources:
-            try:
-                transformed_sources[i] = func(source)
+    copied_source = copy.deepcopy(source)
 
+    if t_options.dropna:
+        copied_source.dropna()
 
-            # TODO fix with proper logger, refactor logger here fro subservices
-            except Exception:
-                pass
+    if t_option.drop is not None:
+        copied_source.drop(t_option.drop)
 
-    concatenate_sources(sources)
-
-    return transformed_sources
+    return copied_source
 
 
 def concatenate_sources(sources: list) -> list:
     """
     Accepts a list of sources and returns a list of sources made by
-    concatenating sources with the same schema.
+    concatenating all sources with an identical schema.
     """
 
     # return variable

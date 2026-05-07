@@ -19,10 +19,13 @@ from pathlib import Path
 from urllib.error import URLError, HTTPError
 from urllib.parse import urlparse, urlunparse
 from urllib.request import urlopen, Request
+# zipfile
 
 import pandas as pd
 from pandas.errors import ParserError
 import sqlalchemy
+
+from basicetl.controllers.extract_options import ExtractOptions
 
 
 class SourceType(Enum):
@@ -34,7 +37,7 @@ class SourceType(Enum):
 
 
 class DataType(Enum):
-    """Represents data type during extraction."""
+    """Represents data format/type during extraction."""
 
     CSV = auto()
     JSON = auto()
@@ -43,11 +46,14 @@ class DataType(Enum):
 logger = logging.getLogger(__name__)
 
 
-def extract_based_on_source(source: str) -> pd.core.frame.DataFrame:
+def extract_based_on_source(source: str, options: object) -> pd.core.frame.DataFrame:
     """Accepts a source, checks and validates it, and returns a dataframe."""
 
     filetype = ""
     df = None
+
+    if not isinstance(options, ExtractOptions):
+        return None
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     source_path = os.path.join(script_dir, source)
@@ -89,6 +95,7 @@ def extract_based_on_source(source: str) -> pd.core.frame.DataFrame:
                     case _:
                         # log please
                         print("Inapplicable filetype.")
+                        raise ValueError("Invalid filetype.")
 
                 return df
 

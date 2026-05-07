@@ -21,3 +21,7 @@ def save_local(sources: list, normalize_filetype=True):
         if normalize_filetype:
             filename = os.path.join(LOCAL_DATA_PATH,  f'data_{i+1}.csv')
             source.to_csv(filename, index=False)
+
+
+# Whence did the wond'rous mystic art arise,
+# Of painting SPEECH, and speaking to the eyes?

@@ -13,5 +13,5 @@ setup(
     license="Hippocratic License",
     packages=find_packages(),
     install_requires=parent_dir.joinpath("requirements.txt").read_text().splitlines(),
-    python_requires=">=3.12",
+    python_requires=">=3.11",
 )

@@ -3,7 +3,7 @@
 # pylint: disable=missing-docstring
 
 import pytest
-from basicetl.submodules import extract as ex
+from basicetl.controllers.submodules import extract as ex
 # from unittest.mock import patch
 
 

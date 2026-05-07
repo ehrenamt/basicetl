@@ -4,9 +4,9 @@ from pathlib import Path
 from datetime import datetime
 
 # project imports
-from .submodules import extract as ex
-from .submodules.transform import configured_transform
-from .submodules.controllers import SubserviceController
+from .controllers.submodules import extract as ex
+from .controllers.submodules.transform import configured_transform
+from .controllers.submodule_controller import SubserviceController
 
 
 DEFAULT_CONFIG_PATH = Path("basicetl-config.yml")
@@ -30,6 +30,10 @@ class BasicETL:
         self.destination = destination
         self.controller = SubserviceController()
 
+    
+    def add_sources(self, *args):
+        self.sources.extend(args)
+
 
     def extract(self, sources: list = None):
         """
@@ -44,27 +48,37 @@ class BasicETL:
 
             ex.get_source_type(source)
 
-            # if source not in ?
-            self.extracted.append(ex.extract_based_on_source(source))
+            extracted_data = ex.extract_based_on_source(source)
+
+            if extracted_data is not None:
+                # stores the in-memory df in the extracted list, likely high memory usage here.
+                self.extracted.append(extracted_data)
 
 
-    def transform(self):
+    def transform(self, extracted_sources: list = None, t_options = None, *customized_transformations):
 
-        # In addition to basic transformations such as merging, joining, and cleaning,
+        if (extracted_sources is None) and (t_options is None) and (customized_transformations == ()):
+            print(f'No arguments passed into transformation stage, proceeding with default transformations.')
 
-        # We'll add the functionality to pass in functions that perform normalization.
-        # Likely needing a control object or something similar, and function templates,
-        # in order to quickly add and remove transformation steps.
+        if extracted_sources is None:
+            extracted_sources = self.extracted
 
-        # This of course depends on the schema, which is not known beforehand,
-        # which is why this flexibility is needed.
+        for source in transformed_sources:
+            interim_transformation_source = configured_transform(source, t_options)
 
-        sources = self.extracted
+            for transformation in customized_transformations:
+                if callable(transformation):
+                    try:
+                        interim_transformation_source = transformation(interim_transformation_source)
 
-        configured_transform(sources=sources)
+                    except Exception as e:
+                        print(f'Error: {e}. (Possible non-callable transformation or invalid function signature.)')
+
+            if interim_transformation_source is not None:
+                transformed_sources.append(interim_transformation_source)
 
 
-    def load(self, functions = None):
+    def load(self, *functions):
         # if (functions == []):
         #     submodules.load.save_local()
         return
@@ -92,3 +106,7 @@ class BasicETL:
 
         print('ETL processes complete.')
         print(f'Time elapsed (mm:ss): {minutes:02d}:{seconds:02d}')
+
+    def etla(self, sources: list):
+        # tentative. etl + analysis
+        return
