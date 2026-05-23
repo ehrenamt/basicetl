@@ -1,0 +1,25 @@
+[{
+  "name": "France",
+  "capital": "Paris",
+  "population": 67364357,
+  "area": 551695,
+  "currency": "Euro",
+  "languages": [
+    "French"
+  ],
+  "region": "Europe",
+  "subregion": "Western Europe"
+},
+{
+  "name": "Germany",
+  "capital": "Berlin",
+  "population": 82577000,
+  "area": 357000,
+  "currency": "Euro",
+  "languages": [
+    "German"
+  ],
+  "region": "Europe",
+  "subregion": "Western Europe"
+}
+]
