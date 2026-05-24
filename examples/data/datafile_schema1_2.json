@@ -1,0 +1,12 @@
+{
+  "name": "Portugal",
+  "capital": "Lisbon",
+  "population": 10749000,
+  "area": 156597,
+  "currency": "Euro",
+  "languages": [
+    "Portuguese"
+  ],
+  "region": null,
+  "subregion": "Central Europe"
+}

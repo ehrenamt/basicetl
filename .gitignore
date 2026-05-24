@@ -7,6 +7,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+basicetl.egg-info
 .Python
 build/
 develop-eggs/
@@ -154,3 +155,5 @@ cython_debug/
 temp/
 .temp/
 TASKS.md
+unnamed_etl_output*
+# unnamed_etl_output*.csv

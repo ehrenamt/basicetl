@@ -1,18 +1,50 @@
-# Sample placeholder - not meant to work
+""""
+-------------------------------------------------------------------------------
+filename: example.py
 
-from basicetl import BasicETL
-# from basicetl.controllers import transform_options
+Sample usage of the BasicETL class.
+-------------------------------------------------------------------------------
+"""
 
-LOCAL_SOURCE_A1 = '../data/datafile_schema1_1.json'
-LOCAL_SOURCE_A2 = '../data/datafile_schema1_2.json'
-LOCAL_SOURCE_A3 = '../data/datafile_schema1_3.json'
+# pylint: disable=missing-docstring
 
-local_a = [LOCAL_SOURCE_A1, LOCAL_SOURCE_A2, LOCAL_SOURCE_A3]
-
-basicetl = BasicETL()
-basicetl.extract(local_a)
+from basicetl import BasicETL, LoadOptions, TransformOptions, DataType
 
 
-# t_options = transform_options.TransformOptions()
+LOCAL_SOURCE_A1 = './data/datafile_schema1_1.json'
+LOCAL_SOURCE_A2 = './data/datafile_schema1_2.json'
+LOCAL_SOURCE_B1 = './data/datafile_schema2_1.csv'
+LOCAL_SOURCE_B2 = './data/datafile_schema2_2.csv'
 
-# basicetl.transform(t_options=t_options)
+local_sources = [
+    LOCAL_SOURCE_A1,
+    LOCAL_SOURCE_A2,
+    LOCAL_SOURCE_B1,
+    LOCAL_SOURCE_B2
+]
+
+etl = BasicETL()
+etl.extract(local_sources)
+
+print("---------------------\n- Extracted sources:\n")
+
+for edf in etl.extracted:
+    print(edf.head())
+    
+t_options = TransformOptions(drop="subregion")
+
+# defining a custom transformation
+def population_to_millions(target_df):
+    target_df['population'] = target_df['population'].map(lambda x : x / 1000000)
+    return target_df
+
+etl.transform(None, t_options, population_to_millions)
+
+print("---------------------\n- Transformed sources:")
+
+for tdf in etl.transformed_sources:
+    print(tdf.head())
+
+print("---------")
+
+etl.load(LoadOptions(save_to_disk=True, filetype=DataType.CSV))

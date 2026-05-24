@@ -2,8 +2,8 @@
 
 The list herein is a tentative plan of features that we intend to add.
 This list is tentative as some of these features may not fall within the scope
-of this project. We aim to keep BasicETL fairly lightweight, even if it does mean 
-lack of support or features regarding certain filetypes or data types.
+of this project. We aim to keep basic-etl fairly lightweight, even if it does
+mean lack of support or features regarding certain filetypes or data types.
 
 ## Extraction / Extract Options Planned Features
 - Batch extraction of large files (on disk)
@@ -22,4 +22,5 @@ which is why this flexibility is needed.
 
 ## Other
 
-Currently does not work with zipped files, but it should be a simple fix. I am working on SQL support as well, but without robust security features.
+Currently does not work with zipped files, but it should be a simple fix. 
+I am working on SQL support as well, but without robust security features.

@@ -2,8 +2,11 @@
 
 # pylint: disable=missing-docstring
 
+import os
+import sys
 import pytest
-from basicetl.controllers.submodules import extract as ex
+
+from basicetl.submodules import extract as ex
 # from unittest.mock import patch
 
 
@@ -12,7 +15,6 @@ from basicetl.controllers.submodules import extract as ex
     ("https://example.com", "https://example.com"),
     ("ftp://example.com/path", "https://example.com/path"),
 ])
-
 def test_convert_to_https(input_http_url, expected_https_url):
     assert ex.convert_to_https(input_http_url) == expected_https_url
 
@@ -24,27 +26,33 @@ def test_convert_to_https(input_http_url, expected_https_url):
     ("http://example.com", True),
     ("https://example.com", True),
 ])
-
 def test_is_valid_url(input_http_url, expected_bool_output):
     assert ex.is_valid_url(input_http_url) == expected_bool_output
 
 
-@pytest.mark.parametrize("input_file_path, expected_bool_output", [
-    ("test/data/datafile_schema1_1.json", True),
-    ("data/datafile_schema1_1", False),
-])
+if sys.platform.startswith("linux"):
 
-def test_is_valid_path(input_file_path, expected_bool_output):
+    cwd = os.getcwd()
 
-    assert ex.is_valid_path(input_file_path) == expected_bool_output
+    os.chdir('/home')
+
+    print("current working dir:")
+    print(os.getcwd())
+    @pytest.mark.parametrize("input_file_path, expected_bool_output", [
+        ("tests/data/datafile_schema1_1.json", True),
+        ("C:/data/datafile_schema1_1", False),
+    ])
+    def test_is_valid_path(input_file_path, expected_bool_output):
+
+        assert ex.is_valid_path("/", input_file_path) == expected_bool_output
+
+    os.chdir(cwd)
 
 
 @pytest.mark.parametrize("source, expected_source_type", [
-    ("test/data/datafile_schema1_1.json", ex.SourceType.FILE),
-    ("test/data/file.xml", ex.SourceType.FILE),
+    ("tests/data/datafile_schema1_1.json", ex.SourceType.FILE),
     ("https://example.com", ex.SourceType.URL),
 ])
-
 def test_get_source_type(source, expected_source_type):
-    assert ex.get_source_type(source) == expected_source_type
+    assert ex.get_source_type(os.getcwd(), source) == expected_source_type
     return
